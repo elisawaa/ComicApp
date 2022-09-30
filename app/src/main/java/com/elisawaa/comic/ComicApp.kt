@@ -85,12 +85,20 @@ private fun ComicNavHost(
         composable(ComicRoute.LIST) {
             ComicListScreen(
                 comicUIState = comicUIState
-            )
+            ) { comicId ->
+                navController.navigate(
+                    ComicRoute.COMIC_SPECIFIC.replace(
+                        "{id}",
+                        comicId.toString()
+                    )
+                )
+            }
         }
         composable(ComicRoute.COMIC) {
-            ComicScreen(
-                comicUIState = comicUIState
-            )
+            ComicScreen()
+        }
+        composable(ComicRoute.COMIC_SPECIFIC) {
+            ComicScreen(id = it.arguments?.getString("id"))
         }
         composable(ComicRoute.FAVORITES) {
             FavoriteScreen(
