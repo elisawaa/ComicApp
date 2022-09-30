@@ -15,6 +15,7 @@ import com.elisawaa.comic.R
 object ComicRoute {
     const val LIST = "List"
     const val COMIC = "Comic"
+    const val COMIC_SPECIFIC = "${COMIC}/{id}"
     const val FAVORITES = "Favorites"
 }
 
