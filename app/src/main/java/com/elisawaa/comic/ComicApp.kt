@@ -21,9 +21,7 @@ import com.elisawaa.comic.ui.navigation.ComicTopLevelDestination
 
 
 @Composable
-fun ComicApp(
-    comicUIState: ComicUIState
-) {
+fun ComicApp() {
     val navController = rememberNavController()
     val navigationActions = remember(navController) {
         ComicNavigationActions(navController)
@@ -33,7 +31,6 @@ fun ComicApp(
         navBackStackEntry?.destination?.route ?: ComicRoute.COMIC
 
     ComicAppContent(
-        comicUIState = comicUIState,
         navController = navController,
         selectedDestination = selectedDestination,
         navigateToTopLevelDestination = navigationActions::navigateTo
@@ -44,7 +41,6 @@ fun ComicApp(
 @Composable
 fun ComicAppContent(
     modifier: Modifier = Modifier,
-    comicUIState: ComicUIState,
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (ComicTopLevelDestination) -> Unit
@@ -58,7 +54,6 @@ fun ComicAppContent(
         ) {
             ComicNavHost(
                 navController = navController,
-                comicUIState = comicUIState,
                 modifier = Modifier.weight(1f),
             )
 
@@ -74,7 +69,6 @@ fun ComicAppContent(
 @Composable
 private fun ComicNavHost(
     navController: NavHostController,
-    comicUIState: ComicUIState,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -83,9 +77,7 @@ private fun ComicNavHost(
         startDestination = ComicRoute.COMIC,
     ) {
         composable(ComicRoute.LIST) {
-            ComicListScreen(
-                comicUIState = comicUIState
-            ) { comicId ->
+            ComicListScreen() { comicId ->
                 navController.navigate(
                     ComicRoute.COMIC_SPECIFIC.replace(
                         "{id}",
@@ -101,9 +93,7 @@ private fun ComicNavHost(
             ComicScreen(id = it.arguments?.getString("id"))
         }
         composable(ComicRoute.FAVORITES) {
-            FavoriteScreen(
-                comicUIState = comicUIState
-            )
+            FavoriteScreen()
         }
     }
 }
