@@ -5,9 +5,7 @@ import com.elisawaa.comic.data.model.Comic
 import com.elisawaa.comic.data.model.ResponseState
 import com.elisawaa.comic.network.ComicService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 
@@ -36,9 +34,11 @@ class ComicRepository @Inject constructor(
             emit(ResponseState.Loading)
 
             val response = comicService.getComic(id)
-            val recentComic = response.body()
-            if (response.isSuccessful && recentComic != null) {
-                emit(ResponseState.Success(recentComic))
+            val comic = response.body()
+            if (response.isSuccessful && comic != null) {
+                comicDao.insert(comic)
+
+                emit(ResponseState.Success(comicDao.getComic(comic.id)))
             } else {
                 emit(ResponseState.Error(Throwable(response.errorBody().toString())))
             }
@@ -49,36 +49,40 @@ class ComicRepository @Inject constructor(
     suspend fun fetchFavorites(): Flow<ResponseState<List<Comic>>> {
         return flow {
             emit(ResponseState.Loading)
-            // TODO EWB
+            val favorites = comicDao.getFavorites()
+            emit(ResponseState.Success(favorites))
+
         }.flowOn(Dispatchers.IO)
     }
 
+    private suspend fun updateComicCacheFrom(startId: Int, endId: Int) {
+        val comicList = mutableListOf<Comic>()
 
-    suspend fun fetchAllComics(): Flow<ResponseState<List<Comic>>> {
-        return flow {
-            val response = comicService.getRecentComic()
-            val recentComic = response.body()
-            if (response.isSuccessful && recentComic != null) {
-                // TODO EWB get highest comic id from DB
-
-                val highestComicId = 0
-                val comicList = mutableListOf<Comic>()
-
-                for (id in highestComicId..recentComic.id) {
-                    comicService.getComic(id).body()?.let { comicList.add(it) }
-                    emit(ResponseState.Success(comicList))
-                }
-                emit(ResponseState.Success(comicList))
-            } else {
-                emit(ResponseState.Error(Throwable(response.errorBody().toString())))
-            }
-
-
-            // TODO EWB clear db
-            // TODO EWB add list to DB
-            // Dao auto update?
+        for (id in startId..endId) {
+            comicService.getComic(id).body()?.let { comicList.add(it) }
         }
 
+        comicDao.insertAll(comicList)
     }
 
+    suspend fun fetchAllComics(): Flow<ResponseState<List<Comic>>> {
+        val response = comicService.getRecentComic()
+        val recentComic = response.body()
+
+        return if (response.isSuccessful && recentComic != null) {
+            val highestComicId = comicDao.getRecentComicId()?.id ?: 0
+
+            updateComicCacheFrom(highestComicId, recentComic.id)
+
+            comicDao.getAll().map {
+                ResponseState.Success(it)
+            }
+        } else {
+            flowOf(ResponseState.Error(Throwable(response.message())))
+        }
+    }
+
+    fun updateFavorite(comic: Comic) {
+        comicDao.updateComic(comic)
+    }
 }
