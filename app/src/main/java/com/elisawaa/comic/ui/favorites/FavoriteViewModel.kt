@@ -33,7 +33,7 @@ class FavoriteViewModel @Inject constructor(
                 .collect { favorites ->
                     when (favorites) {
                         is ResponseState.Error -> _uiState.value =
-                            ComicUIState(error = favorites.t.message)
+                            ComicUIState(error = favorites.errorMessage)
                         ResponseState.Loading -> _uiState.value = ComicUIState(loading = true)
                         is ResponseState.Success -> _uiState.value =
                             ComicUIState(favorites = favorites.data)

@@ -21,12 +21,12 @@ import kotlin.random.Random
 class ComicViewModel @Inject constructor(
     private val repository: ComicRepository,
     savedStateHandle: SavedStateHandle
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ComicUIState(loading = true))
     val uiState: StateFlow<ComicUIState> = _uiState
 
+    // If present, it comes from the nav arg
     private val comicId: String? = savedStateHandle["id"]
 
     init {
@@ -46,7 +46,7 @@ class ComicViewModel @Inject constructor(
                 .collect { comic ->
                     when (comic) {
                         is ResponseState.Error -> _uiState.value =
-                            ComicUIState(error = comic.t.message)
+                            ComicUIState(error = comic.errorMessage)
                         ResponseState.Loading -> _uiState.value = ComicUIState(loading = true)
                         is ResponseState.Success -> _uiState.value =
                             ComicUIState(comic = comic.data)
@@ -65,11 +65,10 @@ class ComicViewModel @Inject constructor(
 
     fun getRandomComic() {
         viewModelScope.launch {
-            repository.fetchRecentComic().collect { response ->
-                if (response is ResponseState.Success) {
-                    val maxId = response.data.id
-                    val randomId = Random.nextInt(1, maxId)
-                    getComic(randomId)
+            repository.fetchAllComicsFromDb().also { comics ->
+                if (comics.isNotEmpty()) {
+                    val rng = Random(System.currentTimeMillis())
+                    _uiState.value = ComicUIState(comic = comics.random(rng))
                 }
             }
         }

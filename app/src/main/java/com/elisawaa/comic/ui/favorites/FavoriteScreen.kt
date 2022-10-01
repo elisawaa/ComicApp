@@ -35,7 +35,7 @@ import com.elisawaa.comic.ui.LoadingScreen
 fun FavoriteScreen(viewModel: FavoriteViewModel = hiltViewModel(), navigateToComic: (Int) -> Unit) {
     val state by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         viewModel.observeFavorites()
     }
 
