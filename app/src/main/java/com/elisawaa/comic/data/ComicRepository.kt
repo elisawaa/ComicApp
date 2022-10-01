@@ -62,6 +62,7 @@ class ComicRepository @Inject constructor(
                         emit(ResponseState.Success(comicDao.getAllNonFlow()))
                     }
                 }
+                emit(ResponseState.Success(comicDao.getAllNonFlow()))
             } else {
                 flowOf(ResponseState.Error(response.message()))
             }
