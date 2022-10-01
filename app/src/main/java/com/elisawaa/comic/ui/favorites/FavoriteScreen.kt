@@ -50,12 +50,12 @@ fun FavoriteScreen(viewModel: FavoriteViewModel = hiltViewModel(), navigateToCom
             ErrorScreen(state.error)
         }
 
-        state.favorites?.let { favorites ->
-            FavoriteBody(favorites, viewModel, navigateToComic)
-        }
-
         if (!state.loading && state.error == null && state.favorites.isNullOrEmpty()) {
             EmptyScreen()
+        } else {
+            state.favorites?.let { favorites ->
+                FavoriteBody(favorites, viewModel, navigateToComic)
+            }
         }
     }
 }
