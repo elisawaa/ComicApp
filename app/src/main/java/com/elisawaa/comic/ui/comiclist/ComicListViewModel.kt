@@ -28,12 +28,20 @@ class ComicListViewModel @Inject constructor(private val repository: ComicReposi
         viewModelScope.launch {
             repository.refreshAndGetAllComics()
                 .catch { e ->
-                    _uiState.value = ComicUIState(error = e.message)
+                    val comics = repository.fetchAllComicsFromDb()
+
+                    // Set filtered comics here to show something from the DB in case we are offline for example
+                    _uiState.value = ComicUIState(error = e.message, comics = comics, filteredComics = comics)
                 }
                 .collect { comic ->
                     when (comic) {
-                        is ResponseState.Error -> _uiState.value =
-                            ComicUIState(error = comic.errorMessage)
+                        is ResponseState.Error -> {
+                            _uiState.value =
+                                ComicUIState(
+                                    error = comic.errorMessage,
+                                    comics = repository.fetchAllComicsFromDb()
+                                )
+                        }
                         ResponseState.Loading -> _uiState.value = ComicUIState(loading = true)
                         is ResponseState.Success -> {
                             _uiState.value = _uiState.value.copy(

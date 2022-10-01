@@ -34,7 +34,8 @@ fun EmptyScreen() {
     ResultLayout(
         icon = Icons.Default.WbSunny,
         title = "Nothing here...",
-        description = "Nothing here yet."
+        description = "Nothing here yet.",
+        modifier = Modifier.fillMaxSize()
     )
 }
 
@@ -48,11 +49,9 @@ fun ErrorScreen(errorMessage: String?) {
 }
 
 @Composable
-fun ResultLayout(icon: ImageVector, title: String, description: String) {
+fun ResultLayout(icon: ImageVector, title: String, description: String, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {

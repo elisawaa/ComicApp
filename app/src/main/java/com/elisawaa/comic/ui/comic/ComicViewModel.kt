@@ -41,7 +41,7 @@ class ComicViewModel @Inject constructor(
         viewModelScope.launch {
             repository.fetchComic(comicId)
                 .catch { e ->
-                    _uiState.value = ComicUIState(error = e.message)
+                    _uiState.value = ComicUIState(comic = repository.getComicFromDb(comicId))
                 }
                 .collect { comic ->
                     when (comic) {

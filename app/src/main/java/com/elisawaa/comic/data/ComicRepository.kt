@@ -33,6 +33,10 @@ class ComicRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getComicFromDb(id: Int): Comic? {
+        return comicDao.getComicNullable(id)
+    }
+
     suspend fun fetchFavorites(): Flow<ResponseState<List<Comic>>> {
         return flow {
             emit(ResponseState.Loading)
@@ -42,14 +46,14 @@ class ComicRepository @Inject constructor(
     }
 
     suspend fun fetchAllComicsFromDb(): List<Comic> {
-        return comicDao.getAllNonFlow()
+        return comicDao.getAll()
     }
 
     suspend fun refreshAndGetAllComics(): Flow<ResponseState<List<Comic>>> {
-        val response = comicService.getRecentComic()
-        val recentComic = response.body()
-
         return flow {
+            val response = comicService.getRecentComic()
+            val recentComic = response.body()
+
             if (response.isSuccessful && recentComic != null) {
                 // If there is no comicId in the DB, setting it to the lowest comic id to fetch everything
                 val highestCachedComicId = comicDao.getRecentComicId()?.id ?: LOWEST_COMIC_ID
@@ -59,10 +63,10 @@ class ComicRepository @Inject constructor(
 
                     // To avoid a very long loading state on the first refresh we update regularly
                     if (id % 25 == 0) {
-                        emit(ResponseState.Success(comicDao.getAllNonFlow()))
+                        emit(ResponseState.Success(comicDao.getAll()))
                     }
                 }
-                emit(ResponseState.Success(comicDao.getAllNonFlow()))
+                emit(ResponseState.Success(comicDao.getAll()))
             } else {
                 flowOf(ResponseState.Error(response.message()))
             }
