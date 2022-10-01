@@ -13,14 +13,17 @@ interface ComicDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(comics: List<Comic>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(comic: Comic)
+
     @Query("DELETE FROM comic")
     suspend fun deleteAll()
 
     @Query("SELECT * FROM comic ORDER BY id DESC limit 1")
-    suspend fun getRecentComicId() : Comic?
+    suspend fun getRecentComicId(): Comic?
 
     @Query("SELECT * FROM comic WHERE id=:id ")
-    fun getComic(id: Int) : Flow<Comic>
+    suspend fun getComic(id: Int): Comic
 
     @Query("SELECT * FROM comic WHERE favorited = 1")
     suspend fun getFavorites(): List<Comic>
