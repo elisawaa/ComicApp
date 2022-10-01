@@ -7,7 +7,7 @@ import com.elisawaa.comic.data.model.Comic
 interface ComicDao {
 
     @Query("SELECT * FROM comic order by id DESC")
-    suspend fun getAllNonFlow(): List<Comic>
+    suspend fun getAll(): List<Comic>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(comics: List<Comic>)
@@ -23,6 +23,9 @@ interface ComicDao {
 
     @Query("SELECT * FROM comic WHERE id=:id ")
     suspend fun getComic(id: Int): Comic
+
+    @Query("SELECT * FROM comic WHERE id=:id ")
+    suspend fun getComicNullable(id: Int): Comic?
 
     @Query("SELECT * FROM comic WHERE favorited = 1")
     suspend fun getFavorites(): List<Comic>
