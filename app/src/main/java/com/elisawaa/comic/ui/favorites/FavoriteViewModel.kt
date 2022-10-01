@@ -7,6 +7,7 @@ import com.elisawaa.comic.data.ComicRepository
 import com.elisawaa.comic.data.model.Comic
 import com.elisawaa.comic.data.model.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,11 +24,7 @@ class FavoriteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ComicUIState(loading = true))
     val uiState: StateFlow<ComicUIState> = _uiState
 
-    init {
-        observeFavorites()
-    }
-
-    private fun observeFavorites() {
+    fun observeFavorites() {
         viewModelScope.launch {
             repository.fetchFavorites()
                 .catch { e ->
@@ -43,6 +40,21 @@ class FavoriteViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun updateFavorite(comic: Comic) {
+        val newComic = comic.copy(favorited = !comic.favorited)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateFavorite(newComic)
+        }
+        _uiState.value = _uiState.value.copy(favorites = _uiState.value.favorites?.map {
+            if (comic.id == it.id) {
+                newComic
+            } else {
+                it
+            }
+        })
     }
 }
 
