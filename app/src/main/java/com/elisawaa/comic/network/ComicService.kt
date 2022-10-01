@@ -5,6 +5,8 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
+const val LOWEST_COMIC_ID: Int = 1
+
 interface ComicService {
 
     @GET("info.0.json")
