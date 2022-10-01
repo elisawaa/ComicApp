@@ -14,26 +14,25 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ComicListViewModel @Inject constructor(private val repository: ComicRepository) :
-    ViewModel() {
+class ComicListViewModel @Inject constructor(private val repository: ComicRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ComicUIState(loading = true))
     val uiState: StateFlow<ComicUIState> = _uiState
 
     init {
-        observeComics()
+        getComics()
     }
 
-    private fun observeComics() {
+    private fun getComics() {
         viewModelScope.launch {
-            repository.fetchAllComics()
+            repository.refreshAndGetAllComics()
                 .catch { e ->
                     _uiState.value = ComicUIState(error = e.message)
                 }
                 .collect { comic ->
                     when (comic) {
                         is ResponseState.Error -> _uiState.value =
-                            ComicUIState(error = comic.t.message)
+                            ComicUIState(error = comic.errorMessage)
                         ResponseState.Loading -> _uiState.value = ComicUIState(loading = true)
                         is ResponseState.Success -> {
                             _uiState.value =
