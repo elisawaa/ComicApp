@@ -15,7 +15,7 @@ class ComicTest {
 
     @Test
     fun testBottomBarAndFavoriteFAb() {
-        // We are on the Comics page
+        // Start testing on the comic page
         composeTestRule.onNodeWithText("Comics")
             .assertIsDisplayed()
 
