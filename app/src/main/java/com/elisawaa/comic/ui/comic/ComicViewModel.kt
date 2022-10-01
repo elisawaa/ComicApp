@@ -8,11 +8,13 @@ import com.elisawaa.comic.data.ComicRepository
 import com.elisawaa.comic.data.model.Comic
 import com.elisawaa.comic.data.model.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 @HiltViewModel
@@ -28,14 +30,14 @@ class ComicViewModel @Inject constructor(
     private val comicId: String? = savedStateHandle["id"]
 
     init {
-        if(comicId != null) {
-            observeComic(comicId.toInt())
+        if (comicId != null) {
+            getComic(comicId.toInt())
         } else {
-            observeComic(20) // TODO EWB Random.nextInt(0, 30)
+            getRandomComic()
         }
     }
 
-    private fun observeComic(comicId: Int) {
+    fun getComic(comicId: Int) {
         viewModelScope.launch {
             repository.fetchComic(comicId)
                 .catch { e ->
@@ -50,6 +52,26 @@ class ComicViewModel @Inject constructor(
                             ComicUIState(comic = comic.data)
                     }
                 }
+        }
+    }
+
+    fun updateFavorite(comic: Comic) {
+        val newComic = comic.copy(favorited = !comic.favorited)
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateFavorite(newComic)
+        }
+        _uiState.value = _uiState.value.copy(comic = newComic)
+    }
+
+    fun getRandomComic() {
+        viewModelScope.launch {
+            repository.fetchRecentComic().collect { response ->
+                if (response is ResponseState.Success) {
+                    val maxId = response.data.id
+                    val randomId = Random.nextInt(1, maxId)
+                    getComic(randomId)
+                }
+            }
         }
     }
 }
