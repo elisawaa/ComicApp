@@ -1,4 +1,4 @@
-package com.elisawaa.comic
+package com.elisawaa.comic.ui.comic
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
@@ -7,9 +7,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,13 +24,15 @@ import com.elisawaa.comic.data.model.Comic
 import com.elisawaa.comic.ui.EmptyScreen
 import com.elisawaa.comic.ui.ErrorScreen
 import com.elisawaa.comic.ui.LoadingScreen
-import com.elisawaa.comic.ui.comic.ComicViewModel
-import com.elisawaa.comic.ui.comic.ZoomableImage
 
 
 @Composable
 fun ComicScreen(viewModel: ComicViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        state.comic?.id?.let { viewModel.getComic(it) }
+    }
 
     if (state.loading) {
         LoadingScreen()
@@ -39,7 +43,7 @@ fun ComicScreen(viewModel: ComicViewModel = hiltViewModel()) {
     }
 
     state.comic?.let { comic ->
-        ComicBody(comic)
+        ComicBody(comic, viewModel)
     }
 
     if (!state.loading && state.error == null && state.comic == null) {
@@ -49,8 +53,10 @@ fun ComicScreen(viewModel: ComicViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun ComicBody(comic: Comic) {
+fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
     val scrollState = rememberScrollState()
+    val icon = if (comic.favorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,14 +80,16 @@ fun ComicBody(comic: Comic) {
                 )
                 ComicImage(comic.img, comic.alt, scrollState)
 
-                Text(
-                    "Transcript",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(comic.transcript, color = MaterialTheme.colorScheme.onBackground)
+                if (comic.transcript.isNotEmpty()) {
+                    Text(
+                        "Transcript",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(comic.transcript, color = MaterialTheme.colorScheme.onBackground)
+                }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { viewModel.getRandomComic() },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(
@@ -92,13 +100,13 @@ fun ComicBody(comic: Comic) {
             }
             FloatingActionButton(
                 onClick = {
-                    // TODO EWB
+                    viewModel.updateFavorite(comic)
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 24.dp, bottom = 16.dp)
             ) {
-                Icon(Icons.Outlined.FavoriteBorder, contentDescription = null)
+                Icon(icon, contentDescription = null)
             }
         }
     }

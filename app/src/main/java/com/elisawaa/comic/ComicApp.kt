@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.elisawaa.comic.ui.comic.ComicScreen
 import com.elisawaa.comic.ui.favorites.FavoriteScreen
 import com.elisawaa.comic.ui.navigation.ComicBottomNavigationBar
 import com.elisawaa.comic.ui.navigation.ComicNavigationActions
