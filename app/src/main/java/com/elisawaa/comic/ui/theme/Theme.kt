@@ -22,7 +22,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun ComicTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // TODO EWB
+    dynamicColor: Boolean = true,
     useSystemUIController: Boolean = true,
     content: @Composable () -> Unit
 ) {
