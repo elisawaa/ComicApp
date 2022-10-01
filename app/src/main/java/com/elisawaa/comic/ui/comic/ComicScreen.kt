@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elisawaa.comic.data.model.Comic
+import com.elisawaa.comic.test.TestTags
 import com.elisawaa.comic.ui.EmptyScreen
 import com.elisawaa.comic.ui.ErrorScreen
 import com.elisawaa.comic.ui.LoadingScreen
@@ -106,6 +108,7 @@ private fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 24.dp, bottom = 16.dp)
+                    .testTag(TestTags.TEST_TAG_COMIC_FAB)
             ) {
                 Icon(icon, contentDescription = null)
             }

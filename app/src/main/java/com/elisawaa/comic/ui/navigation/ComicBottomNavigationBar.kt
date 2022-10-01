@@ -6,6 +6,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 
 
@@ -22,6 +23,7 @@ fun ComicBottomNavigationBar(
             NavigationBarItem(
                 selected = selectedDestination == destination.route,
                 onClick = { navigateToTopLevelDestination(destination) },
+                modifier = Modifier.testTag(destination.testTag),
                 icon = {
                     Icon(
                         imageVector = icon,

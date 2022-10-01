@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.elisawaa.comic.data.model.Comic
+import com.elisawaa.comic.test.TestTags
 import com.elisawaa.comic.ui.EmptyScreen
 import com.elisawaa.comic.ui.ErrorScreen
 import com.elisawaa.comic.ui.LoadingScreen
@@ -39,7 +41,8 @@ import com.elisawaa.comic.ui.LoadingScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComicListScreen(
-    viewModel: ComicListViewModel = hiltViewModel(), navigateToComic: (Int) -> Unit
+    viewModel: ComicListViewModel = hiltViewModel(),
+    navigateToComic: (Int) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -77,7 +80,10 @@ fun ComicListBody(comics: List<Comic>, navigateToComic: (Int) -> Unit) {
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(columns), modifier = Modifier.padding(top = 16.dp)
+            columns = GridCells.Fixed(columns),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .testTag(TestTags.TEST_TAG_COMIC_GRID_LIST)
         ) {
             items(comics) { comic ->
                 ComicListItem(comic) { navigateToComic(comic.id) }
