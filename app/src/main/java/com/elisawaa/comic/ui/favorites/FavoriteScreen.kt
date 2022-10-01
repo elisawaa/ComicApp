@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,24 +30,33 @@ import com.elisawaa.comic.ui.ErrorScreen
 import com.elisawaa.comic.ui.LoadingScreen
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(viewModel: FavoriteViewModel = hiltViewModel(), navigateToComic: (Int) -> Unit) {
     val state by viewModel.uiState.collectAsState()
 
-    if (state.loading) {
-        LoadingScreen()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.observeFavorites()
     }
 
-    if (state.error != null) {
-        ErrorScreen(state.error)
-    }
+    Column {
+        TopAppBar(title = { Text("Favorites") })
 
-    state.favorites?.let { favorites ->
-        FavoriteBody(favorites, viewModel, navigateToComic)
-    }
+        if (state.loading) {
+            LoadingScreen()
+        }
 
-    if (!state.loading && state.error == null && state.favorites.isNullOrEmpty()) {
-        EmptyScreen()
+        if (state.error != null) {
+            ErrorScreen(state.error)
+        }
+
+        state.favorites?.let { favorites ->
+            FavoriteBody(favorites, viewModel, navigateToComic)
+        }
+
+        if (!state.loading && state.error == null && state.favorites.isNullOrEmpty()) {
+            EmptyScreen()
+        }
     }
 }
 
@@ -69,7 +79,8 @@ fun FavoriteBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteItem(comic: Comic, viewModel: FavoriteViewModel, onClick: () -> Unit) {
-    val icon = if (comic.favorited) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite
+    val icon = if (comic.favorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+
     Card(
         onClick = { onClick() }, modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +124,6 @@ fun FavoriteItem(comic: Comic, viewModel: FavoriteViewModel, onClick: () -> Unit
             ) {
                 Icon(icon, null)
             }
-
         }
     }
 }
