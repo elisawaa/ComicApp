@@ -30,7 +30,7 @@ import com.elisawaa.comic.ui.LoadingScreen
 fun ComicScreen(viewModel: ComicViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         state.comic?.id?.let { viewModel.getComic(it) }
     }
 
@@ -53,14 +53,11 @@ fun ComicScreen(viewModel: ComicViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
+private fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
     val scrollState = rememberScrollState()
     val icon = if (comic.favorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 Modifier
@@ -74,10 +71,12 @@ fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
+
                 Text(
                     "Published: ${comic.day}/${comic.month}/${comic.year}",
                     color = MaterialTheme.colorScheme.onBackground
                 )
+
                 ComicImage(comic.img, comic.alt, scrollState)
 
                 if (comic.transcript.isNotEmpty()) {
@@ -86,6 +85,7 @@ fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleLarge
                     )
+
                     Text(comic.transcript, color = MaterialTheme.colorScheme.onBackground)
                 }
                 Button(
@@ -98,6 +98,7 @@ fun ComicBody(comic: Comic, viewModel: ComicViewModel) {
                     )
                 }
             }
+
             FloatingActionButton(
                 onClick = {
                     viewModel.updateFavorite(comic)
