@@ -42,6 +42,7 @@ fun ComicListScreen(
     viewModel: ComicListViewModel = hiltViewModel(), navigateToComic: (Int) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+
     Column {
         TopAppBar({ Text("Comics") })
 
@@ -70,9 +71,7 @@ fun ComicListScreen(
 }
 
 @Composable
-fun ComicListBody(
-    comics: List<Comic>, navigateToComic: (Int) -> Unit
-) {
+fun ComicListBody(comics: List<Comic>, navigateToComic: (Int) -> Unit) {
     val orientation = LocalConfiguration.current.orientation
     val columns = if (orientation == ORIENTATION_PORTRAIT) 2 else 3
 
