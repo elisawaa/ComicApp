@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.elisawaa.comic.ui.favorites.FavoriteScreen
 import com.elisawaa.comic.ui.navigation.ComicBottomNavigationBar
 import com.elisawaa.comic.ui.navigation.ComicNavigationActions
 import com.elisawaa.comic.ui.navigation.ComicRoute
@@ -78,22 +80,26 @@ private fun ComicNavHost(
     ) {
         composable(ComicRoute.LIST) {
             ComicListScreen() { comicId ->
-                navController.navigate(
-                    ComicRoute.COMIC_SPECIFIC.replace(
-                        "{id}",
-                        comicId.toString()
-                    )
-                )
+                navigateToComic(navController, comicId)
             }
         }
         composable(ComicRoute.COMIC) {
             ComicScreen()
         }
         composable(ComicRoute.COMIC_SPECIFIC) {
-            ComicScreen(id = it.arguments?.getString("id"))
+            ComicScreen()
         }
         composable(ComicRoute.FAVORITES) {
-            FavoriteScreen()
+            FavoriteScreen() { comicId -> navigateToComic(navController, comicId) }
         }
     }
+}
+
+fun navigateToComic(navController: NavController, comicId: Int) {
+    navController.navigate(
+        ComicRoute.COMIC_SPECIFIC.replace(
+            "{id}",
+            comicId.toString()
+        )
+    )
 }
