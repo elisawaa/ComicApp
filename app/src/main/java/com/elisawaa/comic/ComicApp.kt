@@ -30,8 +30,7 @@ fun ComicApp() {
         ComicNavigationActions(navController)
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val selectedDestination =
-        navBackStackEntry?.destination?.route ?: ComicRoute.COMIC
+    val selectedDestination = navBackStackEntry?.destination?.route ?: ComicRoute.COMIC
 
     ComicAppContent(
         navController = navController,
@@ -77,7 +76,7 @@ private fun ComicNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = ComicRoute.COMIC,
+        startDestination = ComicRoute.LIST,
     ) {
         composable(ComicRoute.LIST) {
             ComicListScreen() { comicId ->
