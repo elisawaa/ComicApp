@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.elisawaa.comic.R
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 
@@ -112,6 +113,8 @@ fun ZoomableImage(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imgUrl)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.drawable.ic_baseline_image_24)
                 .crossfade(true)
                 .build(),
             contentDescription = contentDescription,

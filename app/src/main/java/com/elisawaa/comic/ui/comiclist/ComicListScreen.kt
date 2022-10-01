@@ -111,8 +111,13 @@ fun ComicListItem(
 
 @Composable
 fun ComicListImage(imgUrl: String, contentDescription: String) {
-    AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(imgUrl).crossfade(true)
-        .build(),
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imgUrl)
+            .placeholder(R.drawable.ic_baseline_image_24)
+            .error(R.drawable.ic_baseline_image_24)
+            .crossfade(true)
+            .build(),
         placeholder = painterResource(R.drawable.ic_baseline_image_24),
         contentDescription = contentDescription,
         contentScale = ContentScale.Crop,

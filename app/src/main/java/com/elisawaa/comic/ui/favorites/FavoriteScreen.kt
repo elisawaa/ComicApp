@@ -94,6 +94,8 @@ fun FavoriteItem(comic: Comic, viewModel: FavoriteViewModel, onClick: () -> Unit
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(comic.img)
+                    .placeholder(R.drawable.ic_baseline_image_24)
+                    .error(R.drawable.ic_baseline_image_24)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(R.drawable.ic_baseline_image_24),
